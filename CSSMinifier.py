@@ -38,6 +38,6 @@ class CSSMinifier:
         Application.get_page()._css = external
 
     def minify(self, file_name: str):
-        file_name = Strings.substr_to(file_name, '?').lstrip('/')
+        file_name = Strings.substr_to(file_name, '?', file_name).lstrip('/')
         path = Application.file_path(file_name)
         return rcssmin.cssmin(Files.get_contents(path))

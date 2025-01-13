@@ -1,6 +1,7 @@
 import subprocess
 
 from gdo.base.Application import Application
+from gdo.base.Logger import Logger
 from gdo.base.Util import Files, dump, Strings
 from gdo.core.GDT_MD5 import GDT_MD5
 
@@ -24,10 +25,13 @@ class JSMinifier:
             return out_path
         out_content = ''
         for file_name in self._files:
-            path = Application.file_path(file_name.strip('/'))
-            path = Strings.substr_to(path, '?')
-            out_content += self.minify(path)
-            out_content += ";\n"
+            try:
+                path = Application.file_path(file_name.strip('/'))
+                path = Strings.substr_to(path, '?')
+                out_content += self.minify(path)
+                out_content += ";\n"
+            except Exception as ex:
+                Logger.exception(ex)
         Files.put_contents(out_path, out_content)
         return out_path
 
