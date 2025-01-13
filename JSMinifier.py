@@ -34,7 +34,6 @@ class JSMinifier:
     def minify(self, path: str) -> str:
         bin = Application.file_path('gdo/bundler/node_modules/terser/bin/terser')
         args = [bin, '--screw-ie8', '-m', '-c', 'drop_console=true', '--', path]
-        dump(args)
         process = subprocess.Popen(
             args,
             stdin=subprocess.PIPE,
