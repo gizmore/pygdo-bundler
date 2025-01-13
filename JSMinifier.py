@@ -1,7 +1,5 @@
 import subprocess
 
-from rjsmin import _make_jsmin, jsmin_for_posers
-
 from gdo.base.Application import Application
 from gdo.base.Util import Files, dump, Strings
 from gdo.core.GDT_MD5 import GDT_MD5
