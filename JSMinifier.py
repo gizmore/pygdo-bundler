@@ -19,7 +19,16 @@ class JSMinifier:
     def output_hash(self) -> str:
         return GDT_MD5.hash_for_str("|".join(self._files))
 
-    def execute(self) -> str:
+    def execute(self):
+        internal = []
+        external = []
+        for file_name in self._files:
+            if file_name.startswith('//'):
+                external.append(file_name)
+            elif file_name.startswith('/'):
+                internal.append(file_name)
+            else:
+                external.append(file_name)
         out_path = self.output_path()
         if Files.exists(out_path):
             return out_path
@@ -33,7 +42,8 @@ class JSMinifier:
             except Exception as ex:
                 Logger.exception(ex)
         Files.put_contents(out_path, out_content)
-        return out_path
+        external.append("/" + Strings.substr_from(out_path, Application.file_path()))
+        Application.get_page()._js = external
 
     def minify(self, path: str) -> str:
         bin = Application.file_path('gdo/bundler/node_modules/terser/bin/terser')

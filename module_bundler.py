@@ -18,20 +18,5 @@ class module_bundler(GDO_Module):
         ]
 
     def gdo_load_scripts(self, page: 'GDT_Page'):
-        self.minify_js(page)
-        self.minify_css(page)
-
-    def minify_js(self, page: 'GDT_Page'):
-        internal = []
-        external = []
-        for file_name in page._js:
-            if file_name.startswith('/'):
-                internal.append(file_name)
-            else:
-                external.append(file_name)
-        minified = JSMinifier(internal).execute()
-        external.append("/" + Strings.substr_from(minified, Application.file_path()))
-        page._js = external
-
-    def minify_css(self, page: 'GDT_Page'):
+        JSMinifier(page._js).execute()
         CSSMinifier(page._css).execute()
