@@ -1,6 +1,8 @@
 import rcssmin
 
 from gdo.base.Application import Application
+from gdo.base.DBLock import DBLock
+from gdo.base.GDO_Module import GDO_Module
 from gdo.base.Util import Files, Strings
 from gdo.core.GDT_MD5 import GDT_MD5
 
@@ -16,24 +18,19 @@ class CSSMinifier:
         return GDT_MD5.hash_for_str("|".join(self._files))
 
     def get_output_path(self):
-        return Application.file_path(f'assets/{self.get_output_hash()}.css')
+        return Application.file_path(f'assets/{GDO_Module.CORE_REV}/{self.get_output_hash()}.css')
 
     def execute(self):
         out_path = self.get_output_path()
         out_content = ''
-        external: list[str] = []
-        internal: list[str] = []
+        external, internal = [], []
         for file_name in self._files:
-            if file_name.startswith('//'):
-                external.append(file_name)
-            elif file_name.startswith('/'):
-                internal.append(file_name)
-            else:
-                external.append(file_name)
+            (external if file_name.startswith('//') or not file_name.startswith('/') else internal).append(file_name)
         if not Files.is_file(out_path):
-            for file_name in internal:
-                out_content += self.minify(file_name)
-            Files.put_contents(out_path, out_content)
+            with DBLock('css_minify', 30):
+                for file_name in internal:
+                    out_content += self.minify(file_name)
+                Files.put_contents(out_path, out_content)
         external.append('/'+Strings.substr_from(out_path, Application.file_path()))
         Application.get_page()._css = external
 

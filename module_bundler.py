@@ -18,5 +18,6 @@ class module_bundler(GDO_Module):
         ]
 
     def gdo_load_scripts(self, page: 'GDT_Page'):
+        Files.create_dir(Application.file_path(f'assets/{GDO_Module.CORE_REV}/'))
         JSMinifier(page._js).execute()
         CSSMinifier(page._css).execute()
