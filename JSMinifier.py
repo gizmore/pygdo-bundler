@@ -2,6 +2,7 @@ import subprocess
 
 from gdo.base.DBLock import DBLock
 from gdo.base.Application import Application
+from gdo.base.Exceptions import GDOException
 from gdo.base.GDO_Module import GDO_Module
 from gdo.base.Logger import Logger
 from gdo.base.Util import Files, dump, Strings
@@ -27,9 +28,8 @@ class JSMinifier:
             (external if file_name.startswith('//') or not file_name.startswith('/') else internal).append(file_name)
         out_path = self.output_path()
         if not Files.exists(out_path):
-            lock = DBLock('js_minify', 1)
-            with lock:
-                if lock.locked:
+            try:
+                with DBLock('js_minify', 1):
                     out_content = ''
                     for file_name in internal:
                         try:
@@ -40,8 +40,8 @@ class JSMinifier:
                         except Exception as ex:
                             Logger.exception(ex)
                     Files.put_contents(out_path, out_content)
-                else:
-                    return
+            except GDOException:
+                pass
         external.append("/" + Strings.substr_from(out_path, Application.file_path()))
         Application.get_page()._js = external
 

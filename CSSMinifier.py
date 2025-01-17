@@ -2,6 +2,7 @@ import rcssmin
 
 from gdo.base.Application import Application
 from gdo.base.DBLock import DBLock
+from gdo.base.Exceptions import GDOException
 from gdo.base.GDO_Module import GDO_Module
 from gdo.base.Util import Files, Strings
 from gdo.core.GDT_MD5 import GDT_MD5
@@ -27,14 +28,13 @@ class CSSMinifier:
         for file_name in self._files:
             (external if file_name.startswith('//') or not file_name.startswith('/') else internal).append(file_name)
         if not Files.is_file(out_path):
-            lock = DBLock('css_minify', 1)
-            with lock:
-                if lock.locked:
+            try:
+                with DBLock('css_minify', 1):
                     for file_name in internal:
                         out_content += self.minify(file_name)
                     Files.put_contents(out_path, out_content)
-                else:
-                    return
+            except GDOException as ex:
+                pass
         external.append('/'+Strings.substr_from(out_path, Application.file_path()))
         Application.get_page()._css = external
 
