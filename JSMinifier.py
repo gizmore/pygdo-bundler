@@ -27,17 +27,21 @@ class JSMinifier:
             (external if file_name.startswith('//') or not file_name.startswith('/') else internal).append(file_name)
         out_path = self.output_path()
         if not Files.exists(out_path):
-            with DBLock('js_minify', 30):
-                out_content = ''
-                for file_name in internal:
-                    try:
-                        path = Application.file_path(file_name.strip('/'))
-                        path = Strings.substr_to(path, '?')
-                        out_content += self.minify(path)
-                        out_content += ";\n"
-                    except Exception as ex:
-                        Logger.exception(ex)
-                Files.put_contents(out_path, out_content)
+            lock = DBLock('js_minify', 1)
+            with lock:
+                if lock.locked:
+                    out_content = ''
+                    for file_name in internal:
+                        try:
+                            path = Application.file_path(file_name.strip('/'))
+                            path = Strings.substr_to(path, '?')
+                            out_content += self.minify(path)
+                            out_content += ";\n"
+                        except Exception as ex:
+                            Logger.exception(ex)
+                    Files.put_contents(out_path, out_content)
+                else:
+                    return
         external.append("/" + Strings.substr_from(out_path, Application.file_path()))
         Application.get_page()._js = external
 

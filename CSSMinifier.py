@@ -27,10 +27,14 @@ class CSSMinifier:
         for file_name in self._files:
             (external if file_name.startswith('//') or not file_name.startswith('/') else internal).append(file_name)
         if not Files.is_file(out_path):
-            with DBLock('css_minify', 30):
-                for file_name in internal:
-                    out_content += self.minify(file_name)
-                Files.put_contents(out_path, out_content)
+            lock = DBLock('css_minify', 1)
+            with lock:
+                if lock.locked:
+                    for file_name in internal:
+                        out_content += self.minify(file_name)
+                    Files.put_contents(out_path, out_content)
+                else:
+                    return
         external.append('/'+Strings.substr_from(out_path, Application.file_path()))
         Application.get_page()._css = external
 
