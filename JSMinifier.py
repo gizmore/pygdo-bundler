@@ -40,7 +40,8 @@ class JSMinifier:
                         except Exception as ex:
                             Logger.exception(ex)
                     Files.put_contents(out_path, out_content)
-            except GDOException:
+            except GDOException as ex:
+                Logger.exception(ex)
                 pass
         external.append("/" + Strings.substr_from(out_path, Application.file_path()))
         Application.get_page()._js = external
