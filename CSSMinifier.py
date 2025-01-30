@@ -6,6 +6,7 @@ from gdo.base.Exceptions import GDOException
 from gdo.base.GDO_Module import GDO_Module
 from gdo.base.Util import Files, Strings
 from gdo.core.GDT_MD5 import GDT_MD5
+from gdo.ui.GDT_Page import GDT_Page
 
 
 class CSSMinifier:
@@ -36,7 +37,7 @@ class CSSMinifier:
             except GDOException as ex:
                 pass
         external.append('/'+Strings.substr_from(out_path, Application.file_path()))
-        Application.get_page()._css = external
+        GDT_Page._css = external
 
     def minify(self, file_name: str):
         file_name = Strings.substr_to(file_name, '?', file_name).lstrip('/')

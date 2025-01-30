@@ -7,6 +7,7 @@ from gdo.base.GDO_Module import GDO_Module
 from gdo.base.Logger import Logger
 from gdo.base.Util import Files, dump, Strings
 from gdo.core.GDT_MD5 import GDT_MD5
+from gdo.ui.GDT_Page import GDT_Page
 
 
 class JSMinifier:
@@ -44,7 +45,7 @@ class JSMinifier:
                 Logger.exception(ex)
                 pass
         external.append("/" + Strings.substr_from(out_path, Application.file_path()))
-        Application.get_page()._js = external
+        GDT_Page._js = external
 
     def minify(self, path: str) -> str:
         bin = Application.file_path('gdo/bundler/node_modules/terser/bin/terser')
