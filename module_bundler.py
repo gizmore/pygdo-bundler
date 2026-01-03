@@ -15,6 +15,7 @@ class module_bundler(GDO_Module):
 
     def gdo_module_config(self) -> list[GDT]:
         return [
+
         ]
 
     def gdo_load_scripts(self, page: 'GDT_Page'):
