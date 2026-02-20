@@ -18,7 +18,7 @@ class JSMinifier:
         self._files = files
 
     def output_path(self) -> str:
-        return Application.file_path(f'assets/{GDO_Module.CORE_REV}/{self.output_hash()}.js')
+        return Application.file_path(f'assets/{GDO_Module.cache_key()}/{self.output_hash()}.js')
 
     def output_hash(self) -> str:
         return GDT_MD5.hash_for_str("|".join(self._files))
@@ -42,7 +42,6 @@ class JSMinifier:
                             Logger.exception(ex)
                     Files.put_contents(out_path, out_content)
             except GDOException as ex:
-                Logger.exception(ex)
                 pass
         external.append("/" + Strings.substr_from(out_path, Application.file_path()))
         GDT_Page._js = external
