@@ -18,7 +18,7 @@ class JSMinifier:
         self._files = files
 
     def output_path(self) -> str:
-        return Application.file_path(f'assets/{GDO_Module.cache_key()}/{self.output_hash()}.js')
+        return Application.file_path(f'assets/{self.output_hash()}.js?{GDO_Module.av_cache_key()}')
 
     def output_hash(self) -> str:
         return GDT_MD5.hash_for_str("|".join(self._files))

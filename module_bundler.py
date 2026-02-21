@@ -37,7 +37,7 @@ class module_bundler(GDO_Module):
             s.val(HTMLBeautifier.beautify(s.get_val()))
 
     def gdo_init(self):
-        Files.create_dir(Application.file_path(f'assets/{self.cache_key()}/'))
+        Files.create_dir(Application.file_path(f'assets/'))
 
     def gdo_load_scripts(self, page: 'GDT_Page'):
         JSMinifier(GDT_Page._js).execute()
