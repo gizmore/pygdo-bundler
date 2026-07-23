@@ -20,7 +20,10 @@ class CSSMinifier:
         return GDT_MD5.hash_for_str("|".join(self._files))
 
     def get_output_path(self):
-        return Application.file_path(f'assets/{self.get_output_hash()}.css?{GDO_Module.av_cache_key()}')
+        return Application.file_path(f'assets/{self.get_output_hash()}.css')
+
+    def get_output_url(self):
+        return f'/assets/{self.get_output_hash()}.css?{GDO_Module.av_cache_key()}'
 
     def execute(self):
         out_path = self.get_output_path()
@@ -36,7 +39,7 @@ class CSSMinifier:
                     Files.put_contents(out_path, out_content)
             except GDOException as ex:
                 pass
-        external.append('/'+Strings.substr_from(out_path, Application.file_path()))
+        external.append(self.get_output_url())
         GDT_Page._css = external
 
     def minify(self, file_name: str):
