@@ -29,7 +29,7 @@ class module_bundler(GDO_Module):
         if self.cfg_html_mode():
             Application.EVENTS.subscribe('render_html', self.render_html_event)
 
-    async def render_html_event(self, s: GDT_String):
+    def render_html_event(self, s: GDT_String):
         mode = self.cfg_html_mode()
         if mode == 'minify':
             s.val(HTMLMinifier.minify(s.get_val()))
